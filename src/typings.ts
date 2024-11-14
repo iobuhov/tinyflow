@@ -16,7 +16,7 @@ export interface Step<T> {
     run: ((context: T) => Promise<StepResult> | Promise<void>) | ((context: T) => StepResult) | ((context: T) => void);
 }
 
-interface Logger {
+export interface Logger {
     info(message?: unknown, ...optionalParams: unknown[]): void;
     error(message?: unknown, ...optionalParams: unknown[]): void;
 }
@@ -28,4 +28,8 @@ export interface JobDefinition<Inputs, Outputs, Context extends { inputs: Inputs
     setup: (inputs: Inputs, outputs: Outputs) => Promise<Context> | Context;
     steps: Step<Context>[];
     logger?: Logger;
+}
+
+export interface Workflow<Inputs, Outputs> {
+    run: (inputs: Inputs, outputs: Outputs) => Promise<{ error: unknown }>;
 }

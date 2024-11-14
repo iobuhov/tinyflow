@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, afterEach, beforeEach } from "vitest";
-import { defineWorkflow } from "../workflow.mjs";
-import { Runnable } from "../typings.js";
+import { defineWorkflow } from "../src/workflow.mjs";
+import { Runnable } from "../src/typings.js";
 
 describe("defineWorkflow", () => {
     let job: Runnable<number, number>;

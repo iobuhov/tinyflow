@@ -1,5 +1,5 @@
 import { vi, describe, expect, it } from "vitest";
-import { defineStep } from "../step.mjs";
+import { defineStep } from "../src/step.mjs";
 
 describe("defineStep", () => {
     it("should return an object with name and run method", async () => {

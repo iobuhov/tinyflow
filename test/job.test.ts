@@ -1,5 +1,5 @@
 import { vi, describe, expect, it, afterEach } from "vitest";
-import { defineJob } from "../job.mjs";
+import { defineJob } from "../src/job.mjs";
 
 describe("defineJob", () => {
     afterEach(() => {

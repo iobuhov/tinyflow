@@ -1,5 +1,5 @@
 import { vi, describe, expect, it } from "vitest";
-import { defineTask } from "../task.mjs";
+import { defineTask } from "../src/task.mjs";
 
 describe("defineTask", () => {
     it("should return 'runnable'", async () => {

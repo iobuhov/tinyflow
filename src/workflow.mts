@@ -19,17 +19,17 @@ export function defineWorkflow<Inputs, MutableOutputs>(
 
         for (const job of jobs) {
             if (job.if && !job.if(inputs, outputs)) {
-                info(`skipping ${job.name}`);
+                info(`skipping ${formatJob(job)}`);
                 continue;
             }
 
-            info(`running ${job.name}`);
+            info(`running '${job.name}'`);
             const { error } = await job.run(inputs, outputs);
             if (error) {
-                info(`job competed with error`);
+                info(`${formatJob(job)}: job competed with error`);
                 return { error };
             }
-            info(`${job.name} done`);
+            info(`${formatJob(job)}: done`);
         }
 
         info("all jobs completed successfully");
@@ -40,3 +40,5 @@ export function defineWorkflow<Inputs, MutableOutputs>(
         run,
     };
 }
+
+const formatJob = (job: { name: string }) => `'${job.name}'`;

@@ -4,10 +4,13 @@ interface WorkflowOptions {
     logger?: Logger;
 }
 
-export function defineWorkflow<Inputs, MutableOutputs>(
-    jobs: Runnable<Inputs, MutableOutputs>[],
-    options: WorkflowOptions = {},
-): Workflow<Inputs, MutableOutputs> {
+export function defineWorkflow<Inputs, MutableOutputs>({
+    jobs,
+    options = {},
+}: {
+    jobs: Runnable<Inputs, MutableOutputs>[];
+    options?: WorkflowOptions;
+}): Workflow<Inputs, MutableOutputs> {
     const { logger = console } = options;
 
     const info = (message: string) => {

@@ -17,7 +17,7 @@ describe("defineWorkflow", () => {
     });
 
     it("should return an object with run method", async () => {
-        const workflow = defineWorkflow([job]);
+        const workflow = defineWorkflow({ jobs: [job] });
 
         expect(workflow).toBeDefined();
         expect(workflow.run).toBeInstanceOf(Function);
@@ -25,17 +25,17 @@ describe("defineWorkflow", () => {
 
     describe("workflow.run", () => {
         it("should accept two arguments", () => {
-            const workflow = defineWorkflow([job]);
+            const workflow = defineWorkflow({ jobs: [job] });
             expect(workflow.run.length).toBe(2);
         });
 
         it("should return a Promise", async () => {
-            const workflow = defineWorkflow([job]);
+            const workflow = defineWorkflow({ jobs: [job] });
             expect(workflow.run(0, 0)).toBeInstanceOf(Promise);
         });
 
         it("should pass inputs and outputs to the job", async () => {
-            const workflow = defineWorkflow([job]);
+            const workflow = defineWorkflow({ jobs: [job] });
 
             await workflow.run(37, 42);
 

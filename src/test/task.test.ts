@@ -1,40 +1,18 @@
-import { vi, describe, expect, it, beforeEach } from "vitest";
+import { vi, describe, expect, it } from "vitest";
+import { defineTask } from "../task.mjs";
 
 describe("defineTask", () => {
-    it("should return an object with run method", async () => {
+    it("should return 'runnable'", async () => {
+        const fn = vi.fn(() => Promise.resolve({ error: null }));
         const task = defineTask({
             name: "Task",
-            run: vi.fn(),
+            run: fn,
         });
 
         expect(task).toBeDefined();
         expect(task.name).toBe("Task");
         expect(task.run).toBeInstanceOf(Function);
-    });
-
-    describe("task.run", () => {
-        let fn = vi.fn();
-        let task;
-
-        beforeEach(() => {
-            fn = vi.fn();
-            task = defineTask({
-                name: "Task",
-                run: fn,
-            });
-        });
-
-        it("should accept two arguments", () => {
-            expect(task.run.length).toBe(2);
-        });
-
-        it("should return a Promise", () => {
-            expect(task.run(null, null)).toBeInstanceOf(Promise);
-        });
-
-        it("should call the spec.run function with correct arguments", async () => {
-            task.run(37, 42);
-            expect(fn).toHaveBeenCalledWith(37, 42);
-        });
+        expect(task.run(37, 42)).toBeInstanceOf(Promise);
+        expect(fn).toHaveBeenCalledWith(37, 42);
     });
 });

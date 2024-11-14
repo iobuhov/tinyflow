@@ -6,7 +6,7 @@ import { Runnable } from "./typings.js";
  * Handy when your job has only one step.
  */
 export function defineTask<Inputs, MutableOutputs>(
-    task: Runnable<Inputs, MutableOutputs, Promise<void> | void>,
+    task: Runnable<Inputs, MutableOutputs, Promise<unknown> | unknown>,
 ): Runnable<Inputs, MutableOutputs> {
     return {
         name: task.name,

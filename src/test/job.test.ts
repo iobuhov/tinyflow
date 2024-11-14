@@ -6,80 +6,94 @@ describe("defineJob", () => {
         vi.restoreAllMocks();
     });
 
-    it("should return a runnable job", async () => {
-        const spy = vi.spyOn(console, "info");
+    it("should return 'runnable'", async () => {
+        const fn = vi.fn();
 
-        const job = defineJob({
-            name: "Foo",
-            setup: (inputs: null, outputs: null) => ({ inputs, outputs }),
-            steps: [
-                {
-                    name: "Bar",
-                    run: () => console.info("One"),
-                },
-                {
-                    name: "Baz",
-                    run: () => console.info("Two"),
-                },
-            ],
-            finally: context => {
-                console.info("Finally", context);
-            },
+        const step3 = () => ({
+            name: "Last",
+            run: fn,
         });
 
-        expect(job.name).toBe("Foo");
-
-        await job.run(null, null);
-        const output = spy.mock.calls.flat();
-
-        expect(output).toMatchInlineSnapshot(`
-          [
-            "[1/2] Bar",
-            "One",
-            "[2/2] Baz",
-            "Two",
-            "Running finally hook",
-            "Finally",
-            {
-              "inputs": null,
-              "outputs": null,
-            },
-          ]
-        `);
-    });
-
-    it("the job should skip step when step.if return false", async () => {
-        const spy = vi.spyOn(console, "info");
-        const fn = vi.fn(() => false);
-
         const job = defineJob({
-            name: "Foo",
-            setup: (inputs: null, outputs: null) => ({ inputs, outputs }),
-            steps: [
-                {
-                    name: "Bar",
-                    run: () => console.info("One"),
-                },
-                {
-                    name: "Baz",
-                    if: fn,
-                    run: () => console.info("Two"),
-                },
-            ],
+            name: "Build",
+            setup: (inputs: unknown, outputs: unknown) => ({ inputs, outputs }),
+            steps: [step1(), step2(), step3()],
         });
 
-        await job.run(null, null);
-
-        expect(fn).toHaveBeenCalledWith({ inputs: null, outputs: null });
-
-        const output = spy.mock.calls.flat();
-
-        expect(output).toMatchInlineSnapshot(`
-          [
-            "[1/2] Bar",
-            "One",
-            "[2/2] Skip Baz step",
-          ]
-        `);
+        expect(job).toBeDefined();
+        expect(job.name).toBe("Build");
+        expect(job.run).toBeInstanceOf(Function);
+        const run = job.run(37, 42);
+        expect(run).toBeInstanceOf(Promise);
+        await run;
+        expect(fn).toHaveBeenCalledWith({ inputs: 37, outputs: 42 });
     });
+
+    describe("job.run", () => {
+        it("should run 'finally' hook, if present", async () => {
+            const spy = vi.spyOn(console, "info");
+
+            const job = defineJob({
+                name: "Build",
+                setup: (inputs: number, outputs: number) => ({ inputs, outputs }),
+                steps: [step1(), step2()],
+                finally: context => {
+                    console.info("Finally", context);
+                },
+            });
+
+            await job.run(29, 39);
+            const output = spy.mock.calls.flat();
+
+            expect(output).toMatchInlineSnapshot(`
+              [
+                "[1/2] Foo",
+                "One",
+                "[2/2] Bar",
+                "Two",
+                "Running finally hook",
+                "Finally",
+                {
+                  "inputs": 29,
+                  "outputs": 39,
+                },
+              ]
+            `);
+        });
+
+        it("should skip step when step.if return false", async () => {
+            const spy = vi.spyOn(console, "info");
+            const fn = vi.fn(() => false);
+
+            const job = defineJob({
+                name: "Foo",
+                setup: (inputs: null, outputs: null) => ({ inputs, outputs }),
+                steps: [step1(), { name: "Bar", if: fn, run: () => console.info("Two") }],
+            });
+
+            await job.run(null, null);
+
+            expect(fn).toHaveBeenCalledWith({ inputs: null, outputs: null });
+
+            const output = spy.mock.calls.flat();
+
+            expect(output).toMatchInlineSnapshot(`
+              [
+                "[1/2] Foo",
+                "One",
+                "[2/2] Skip Bar step",
+              ]
+            `);
+        });
+    });
+});
+
+const step1 = () => ({
+    name: "Foo",
+    run: () => console.info("One"),
+});
+
+const step2 = () => ({
+    name: "Bar",
+    run: () => console.info("Two"),
 });

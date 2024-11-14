@@ -4,17 +4,17 @@ interface WorkflowOptions {
     logger?: Logger;
 }
 
-export function defineWorkflow<Inputs, Outputs>(
-    jobs: Runnable<Inputs, Outputs>[],
+export function defineWorkflow<Inputs, MutableOutputs>(
+    jobs: Runnable<Inputs, MutableOutputs>[],
     options: WorkflowOptions = {},
-): Workflow<Inputs, Outputs> {
+): Workflow<Inputs, MutableOutputs> {
     const { logger = console } = options;
 
     const info = (message: string) => {
         logger.info(`[workflow] ${message}`);
     };
 
-    const run = async (inputs: Inputs, outputs: Outputs) => {
+    const run = async (inputs: Inputs, outputs: MutableOutputs) => {
         info("start workflow");
 
         for (const job of jobs) {

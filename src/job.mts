@@ -1,13 +1,13 @@
 import { Runnable, JobDefinition, RollbackFn } from "./typings.js";
 
-export function defineJob<Inputs, Outputs, Context extends { inputs: Inputs; outputs: Outputs }>(
-    spec: JobDefinition<Inputs, Outputs, Context>,
-): Runnable<Inputs, Outputs> {
+export function defineJob<Inputs, MutableOutputs, Context extends { inputs: Inputs; outputs: MutableOutputs }>(
+    spec: JobDefinition<Inputs, MutableOutputs, Context>,
+): Runnable<Inputs, MutableOutputs> {
     const { name, steps, finally: finallyHook, setup, logger = console } = spec;
 
     const createContext = async (
         inputs: Inputs,
-        outputs: Outputs,
+        outputs: MutableOutputs,
     ): Promise<{ error: true; data: unknown } | { error: false; data: Context }> => {
         try {
             return { error: false, data: await setup(inputs, outputs) };
@@ -67,7 +67,7 @@ export function defineJob<Inputs, Outputs, Context extends { inputs: Inputs; out
         }
     };
 
-    const run = async (inputs: Inputs, outputs: Outputs) => {
+    const run = async (inputs: Inputs, outputs: MutableOutputs) => {
         const ctx = await createContext(inputs, outputs);
         if (ctx.error) {
             return error(ctx.data);

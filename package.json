@@ -13,6 +13,10 @@
         "runner",
         "node"
     ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/iobuhov/tinyflow.git"
+    },
     "license": "Apache-2.0",
     "type": "module",
     "exports": {

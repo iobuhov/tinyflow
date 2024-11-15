@@ -1,8 +1,8 @@
 {
     "name": "@iobuhovxyz/tinyflow",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "author": "Illia Obukhau <pluto.kuiper.zofaa@slmail.me>",
-    "description": "Zero dependency library for writing type safe scripts for node. Inspired by GitHub actions.",
+    "description": "Zero dependency library for writing type safe, organized workflows for node. Inspired by GitHub actions.",
     "keywords": [
         "typescript",
         "flow",
